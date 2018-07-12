@@ -6,18 +6,18 @@ public class B_Ladder : MonoBehaviour {
     
     public float speed = 5;
     public BoxCollider2D Floor = null;
+    public Rigidbody2D target;
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Rigidbody2D body = collision.GetComponent<Rigidbody2D>();
-        if (collision.tag == "Player" && body.velocity.x == 0)
+        if (collision.tag.Equals("PlayerCenter") && Mathf.Abs(target.velocity.x) < 3f)
         {
             Floor.isTrigger = true;
-            collision.GetComponent<Rigidbody2D>().velocity = new Vector2(0, speed);
+            target.velocity = new Vector2(0, speed);
         }
-        else if(collision.tag == "Player" && body.velocity.y < 0)
+        else if(collision.tag.Equals("PlayerCenter") && target.velocity.y < 0)
         {
-            collision.GetComponent<Rigidbody2D>().velocity = new Vector2(0, speed);
+            target.GetComponent<Rigidbody2D>().velocity = new Vector2(0, speed);
         }
 
     }

@@ -8,8 +8,7 @@ public class B_Ladder1 : MonoBehaviour {
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Rigidbody2D body = collision.GetComponent<Rigidbody2D>();
-        if (collision.tag == "Player")
+        if (collision.tag == "PlayerCenter")
         {
             Floor.isTrigger = false;
         }
