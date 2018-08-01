@@ -20,6 +20,7 @@ TagManager:
   - door1
   - hourGlass
   - ladder+
+  - side
   layers:
   - Default
   - TransparentFX

@@ -156,7 +156,8 @@ public class B_EnemyMovement : MonoBehaviour {
 
     private void setFlag()
     {
-        flag = true;
+        if(!waterball.activeSelf)
+            flag = true;
     }
 
     // enemy1 공격 함수

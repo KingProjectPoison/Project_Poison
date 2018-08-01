@@ -17,6 +17,8 @@ public class B_PlayerControl : MonoBehaviour {
     private Transform ThisTransform = null;
     // 착지 여부
     public bool isGrounded = false;
+    // 이동 여부
+    public bool drag = false;
     // 속도 변수
     public float MaxSpeed = 10f, Speed = 5f;
     public float JumpPower = 500;
@@ -51,7 +53,7 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false;
+    bool isFall = false, DragFlag = false;
     float dirX;
 
     // Use this for initialization
@@ -70,8 +72,8 @@ public class B_PlayerControl : MonoBehaviour {
     private bool GetGrounded()
     {
         // 바닥을 확인한다
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 1.2f, transform.position.y - 1.2f),
-            new Vector2(transform.position.x, transform.position.y), GroundLayer);
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 0.6f, transform.position.y - 1.2f),
+            new Vector2(transform.position.x+0.6f, transform.position.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
         return false;
@@ -158,11 +160,19 @@ public class B_PlayerControl : MonoBehaviour {
     private void FixedUpdate()
     {
         // 이동
-        dirX = CrossPlatformInputManager.GetAxis("Horizontal");
-        ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
+        if (!drag)
+        {
+            dirX = CrossPlatformInputManager.GetAxis("Horizontal");
+            ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
+        }
 
         //점프
         isGrounded = GetGrounded();
+        if (isGrounded && drag && !DragFlag)
+        {
+            DragFlag = true;
+            Invoke("DragOff", 0.5f);
+        }
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
             Jump();
 
@@ -194,9 +204,37 @@ public class B_PlayerControl : MonoBehaviour {
         }
 
         // 필요한 경우 방향을 바꾼다.
-        if ((dirX < 0f && Facing == FaceDirection.FaceLeft) || (dirX > 0f && Facing == FaceDirection.FaceRight))
+        if (!drag && ((dirX < 0f && Facing == FaceDirection.FaceLeft) || (dirX > 0f && Facing == FaceDirection.FaceRight)))
             FlipDirection();
             
+    }
+
+    // 벽, 바닥에 옆면에 붙어있기 금지
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("wall"))
+        {
+            if (!isGrounded)
+            {
+                drag = true;
+            }
+            else
+                drag = false;
+        }
+        else if (collision.tag.Equals("side"))
+        {
+            bool fc = false;
+            if ((collision.transform.position.x < transform.position.x) && Facing == FaceDirection.FaceRight)
+                fc = true;
+            else if ((collision.transform.position.x > transform.position.x) && Facing == FaceDirection.FaceLeft)
+                fc = true;
+            if (!isGrounded && fc)
+            {
+                drag = true;
+            }
+            else
+                drag = false;
+        }
     }
 
     // 말탄환에 맞거나 enemy와 충돌했을 경우
@@ -204,6 +242,7 @@ public class B_PlayerControl : MonoBehaviour {
     {
         if (Health != 0 && HitFlag && !shield.isActiveAndEnabled)
         {
+            // 말탄환에 맞았을 경우
             if (collision.tag.Equals("letterbullet"))
             {
                 HitFlag = false;
@@ -223,8 +262,20 @@ public class B_PlayerControl : MonoBehaviour {
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
                 Invoke("HitFlagOn", 1f);
+                // 맞은 방향 반대편으로 밀려나는 효과
+                drag = true;
+                if (collision.transform.position.x < transform.position.x)
+                {
+                    ThisBody.velocity = Vector2.right * 2;
+                }
+                else if (collision.transform.position.x > transform.position.x)
+                {
+                    ThisBody.velocity = Vector2.left * 2;
+                }
+                Invoke("DragOff", 1f);
             }
 
+            // 적과 충돌한 경우
             if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
             {
                 print("enemy in");
@@ -243,7 +294,18 @@ public class B_PlayerControl : MonoBehaviour {
                 }
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
-                Invoke("HitFlagOn", 1f);
+                Invoke("HitFlagOn", 0.5f);
+                // 맞은 방향 반대편으로 밀려나는 효과
+                drag = true;
+                if (collision.transform.position.x < transform.position.x)
+                {
+                    ThisBody.velocity = Vector2.right * 4;
+                }
+                else if (collision.transform.position.x > transform.position.x)
+                {
+                    ThisBody.velocity = Vector2.left * 4;
+                }
+                Invoke("DragOff", 0.5f);
             }
         }
 
@@ -254,9 +316,23 @@ public class B_PlayerControl : MonoBehaviour {
         }
     }
 
+    private void DragOff()
+    {
+        drag = false;
+        DragFlag = false;
+    }
+
     private void HitFlagOn()
     {
         HitFlag = true;
+    }
+
+    // Door0에 닿으면 왼쪽 아래로 이동하는데, 이 때 앞으로 튕겨져 나오는 듯한 효과 주기
+    public void Door0()
+    {
+        drag = true;
+        ThisBody.velocity = Vector2.right * 6;
+        Invoke("DragOff", 0.5f);
     }
 
     // 아이템 관련

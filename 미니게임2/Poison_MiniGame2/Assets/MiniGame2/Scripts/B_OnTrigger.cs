@@ -33,8 +33,9 @@ public class B_OnTrigger : MonoBehaviour {
 
         if (tag.Equals("Player") && ThisTag.Equals("door0"))
         {
-            collision.GetComponent<Transform>().position = new Vector2(-6.404f, -4.78f);
+            collision.GetComponent<Transform>().position = new Vector2(-6.404f, -4.6f);
             Camera.position = new Vector3(Camera.position.x, 0f, Camera.position.z);
+            collision.GetComponent<B_PlayerControl>().Door0();
         }
 
         if (tag.Equals("Player") && ThisTag.Equals("door1"))
