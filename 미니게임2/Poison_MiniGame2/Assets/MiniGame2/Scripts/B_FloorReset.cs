@@ -36,6 +36,7 @@ public class B_FloorReset : MonoBehaviour {
                 {
                     switchA = true;
                     StartCoroutine("ResetFloor");
+                    initialFloor.flag = false;
                 }
             }
         }
@@ -52,7 +53,7 @@ public class B_FloorReset : MonoBehaviour {
         yield return new WaitForSecondsRealtime(1f);
         for (int i = floors.Length - 1; i >= 0; i--)
         {
-            if (initialFloor.switchA)
+            if (initialFloor.flag)
                 break;
             if (floors[i].activeSelf)
             {

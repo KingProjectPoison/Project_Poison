@@ -245,6 +245,21 @@ public class B_UIManager : MonoBehaviour {
         enemy2HP--;
         enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
     }
+    // LastPang 모드 진입 시 enemy 체력 +1
+    public void HealEnemy()
+    {
+        // enemy1이 살아남은 경우
+        if (enemy1HP > 0 && enemy1HP < enemyMaxHP)
+        {
+            enemy1HP += 2;
+            enemy1_scroll.size = (float) enemy1HP / enemyMaxHP;
+        }
+        else if (enemy2HP > 0 && enemy2HP < enemyMaxHP)
+        {
+            enemy2HP += 2;
+            enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
+        }
+    }
 
     // 공격/방어 개수 제한 관련
     public void Attack()

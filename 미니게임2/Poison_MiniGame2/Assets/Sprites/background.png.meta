@@ -17,6 +17,17 @@ TextureImporter:
     21300024: UI_letter
     21300026: UI_Yes
     21300028: UI_No
+    21300030: Keyword1
+    21300032: Keyword2
+    21300034: Keyword3
+    21300036: Keyword4
+    21300038: Keyword5
+    21300040: Keyword6
+    21300042: Keyword7
+    21300044: Keyword8
+    21300046: ClearMessage
+    21300048: waterball_white
+    21300050: markX
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -272,9 +283,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1288
-        y: 1509
-        width: 560
-        height: 56
+        y: 1505
+        width: 600
+        height: 60
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -291,8 +302,8 @@ TextureImporter:
       name: UI_Yes
       rect:
         serializedVersion: 2
-        x: 1344
-        y: 1430
+        x: 1423
+        y: 1409
         width: 64
         height: 64
       alignment: 0
@@ -311,10 +322,10 @@ TextureImporter:
       name: UI_No
       rect:
         serializedVersion: 2
-        x: 1471
-        y: 1437
-        width: 150
-        height: 50
+        x: 1556
+        y: 1410
+        width: 160
+        height: 60
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -323,6 +334,226 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: d443abd88959f7445a8ed72316976616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword1
+      rect:
+        serializedVersion: 2
+        x: 1632
+        y: 1742
+        width: 50
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea29a5c6a95b9f44c9d4c33b45d86ee1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword2
+      rect:
+        serializedVersion: 2
+        x: 1745
+        y: 1712
+        width: 71
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f620d1d7c7c53034f8371ca802b14b88
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword3
+      rect:
+        serializedVersion: 2
+        x: 1689
+        y: 1712
+        width: 50
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bc1bf499165ee9449790a3bfe96642b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword4
+      rect:
+        serializedVersion: 2
+        x: 1744
+        y: 1741
+        width: 49
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e41a01115aecd564d81580ed85c644fc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword5
+      rect:
+        serializedVersion: 2
+        x: 1633
+        y: 1710
+        width: 47
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd298e37cf66b7b46a49997660e3aed9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword6
+      rect:
+        serializedVersion: 2
+        x: 1688
+        y: 1743
+        width: 51
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b3f4810a64b9244290271bd8b203cd4
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword7
+      rect:
+        serializedVersion: 2
+        x: 1798
+        y: 1742
+        width: 48
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5446f3879db7bf04b9badaaa5ac989ae
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Keyword8
+      rect:
+        serializedVersion: 2
+        x: 1631
+        y: 1680
+        width: 131
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd9a1378415f8df44ba98b7fe0f0ed5b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClearMessage
+      rect:
+        serializedVersion: 2
+        x: 1774
+        y: 1682
+        width: 48
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a17fe9e1c1e411d49b3afa8d91736ef1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: waterball_white
+      rect:
+        serializedVersion: 2
+        x: 1291
+        y: 1272
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0befb6d00d35cd74eafeeb64c1ff030e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: markX
+      rect:
+        serializedVersion: 2
+        x: 1612
+        y: 1843
+        width: 209
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1db6dfcbe4855a34286406bdb5c298d8
       vertices: []
       indices: 
       edges: []

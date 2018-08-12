@@ -18,16 +18,22 @@ public class B_EnemyMovement : MonoBehaviour {
     [SerializeField]
     public float[] bulletTimeOut;
     // 공격/방어를 위한
+    public Transform markX_L, markX_R;
     public Transform LastBarrelCenter;
-    public Transform[] LastBarrel, LastBullet;
+    public Transform[] LastBarrel1, LastBullet1, LastBarrel2, LeftFloor, RightFloor;
+    private Transform tempFloor = null;
+    public Transform BarrelCenter = null;
     public Transform[] barrel, bullet;
-    private B_DestroyInTime[] Bullets = null, LastBullets = null;
+    private B_DestroyInTime[] Bullets = null, LastBullets1 = null;
+    private int[] LastBullets2_index = {27, 14, 15, 16, 21, 22, 23};
     public float destroyTime = 1f;
     public B_PlayerControl target;
     private Transform targetTransform;
     private bool enemy1_CanAttack = true;
     private bool enemy2_CanAttack = true;
     // 애니메이션을 위한
+    private Animator[] bulletAnimator;
+    public GameObject[] bulletObject;
     public Animator headAnimator, wingsAnimator, bodyAnimator;
     public GameObject waterball, Ihead;
     public SpriteRenderer wingL, wingR;
@@ -40,7 +46,7 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0, page = 1, count = 0;
-    bool flag = true, flip = true, clear = false, switchA = false, switchB = false;
+    bool flag = true, flip = true, clear = false, switchA = false, switchB = false, switchC = false;
     Vector2 targetDir, Dir;
     Vector3 UpMiddle = new Vector3(0, 16.7f, 0);
     //  체력 5칸
@@ -66,16 +72,21 @@ public class B_EnemyMovement : MonoBehaviour {
         ThisName = ThisTransform.tag;
         targetTransform = target.GetComponent<Transform>();
         Bullets = new B_DestroyInTime[bullet.Length];
-        LastBullets = new B_DestroyInTime[LastBullet.Length];
+        LastBullets1 = new B_DestroyInTime[LastBullet1.Length];
+        bulletAnimator = new Animator[bulletObject.Length];
         for (int i = 0; i < bullet.Length; i++)
         {
             bullet[i].gameObject.SetActive(false);
             Bullets[i] = bullet[i].GetComponent<B_DestroyInTime>();
         }
-        for (int i = 0; i < LastBullet.Length; i++)
+        for (int i = 0; i < LastBullet1.Length; i++)
         {
-            LastBullet[i].gameObject.SetActive(false);
-            LastBullets[i] = LastBullet[i].GetComponent<B_DestroyInTime>();
+            LastBullet1[i].gameObject.SetActive(false);
+            LastBullets1[i] = LastBullet1[i].GetComponent<B_DestroyInTime>();
+        }
+        for (int i = 0; i < bulletAnimator.Length; i++)
+        {
+            bulletAnimator[i] = bulletObject[i].GetComponent<Animator>();
         }
         waterball.SetActive(false);
         ClearEnemy.SetActive(false);
@@ -215,6 +226,49 @@ public class B_EnemyMovement : MonoBehaviour {
 
             /* LastPang 모드 일 때 */
             case B_UIManager.enemyMode.LastPang:
+                if (!switchC)
+                {
+                    switchC = true;
+                    // 플레이어를 향해 말탄환 생성 및 발사
+                    float gap = 0.3f;
+                    for (int k = 0; k < 7; k++)
+                    {
+                        int index = LastBullets2_index[k];
+                        switch (k)
+                        {
+                            case 0:
+                                targetDir = targetTransform.position + new Vector3(0, gap*3, 0);
+                                break;
+                            case 1:
+                                targetDir = targetTransform.position + new Vector3(-gap*3, 0, 0);
+                                break;
+                            case 2:
+                                targetDir = targetTransform.position + new Vector3(-gap*2, gap, 0);
+                                break;
+                            case 3:
+                                targetDir = targetTransform.position - new Vector3(-gap, gap*2, 0);
+                                break;
+                            case 4:
+                                targetDir = targetTransform.position - new Vector3(gap, gap*2, 0);
+                                break;
+                            case 5:
+                                targetDir = targetTransform.position + new Vector3(gap*2, gap, 0);
+                                break;
+                            case 6:
+                                targetDir = targetTransform.position + new Vector3(gap*3, 0, 0);
+                                break;
+                            }
+                        Dir = targetDir - (Vector2)LastBarrel2[k].position;
+                        digree = Mathf.Atan2(LastBarrel2[k].position.y - targetDir.y, LastBarrel2[k].position.x - targetDir.x) * 180f / Mathf.PI;
+                        LastBarrel2[k].Rotate(0, 0, digree);
+                        LastBullet1[index].gameObject.SetActive(true);
+                        LastBullet1[index].position = LastBarrel2[k].position;
+                        LastBullet1[index].rotation = LastBarrel2[k].rotation;
+                        LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
+                        LastBarrel2[k].Rotate(0, 0, -digree);
+                    }
+                    UIM.HealEnemy();
+                }
                 if (!switchB)
                 {
                     if (ThisTransform.position == UpMiddle)
@@ -275,44 +329,134 @@ public class B_EnemyMovement : MonoBehaviour {
     IEnumerator LastAttack()
     {
         yield return new WaitForSecondsRealtime(2f);
+        // 참고 - 준비된 말탄환 28개
+        int index = 0;
         while (Health > 0)
         {
-            // 준비된 말탄환 28개 (9*3 = 27 / 한 화면에 3번 반복 가능)
-            for (int count = 0; count < 8; count++)
+            /* 패턴 1 => 말탄환 좌우로 마구마구 공격*/
+            for (int count = 0; count <= 7; count++)
             {
-                int index = 0;
                 // 5방향으로 말탄환을 날린다. (0, 2, 4, 6, 8)
                 for (int k = 0; k < 9; k += 2)
                 {
                     index = k + (count%3) * 9;
-                    targetDir = LastBarrel[k].position;
+                    targetDir = LastBarrel1[k].position;
                     Dir = targetDir - (Vector2)ThisTransform.position;
-                    LastBullet[index].gameObject.SetActive(true);
-                    LastBullet[index].position = LastBarrel[k].position;
-                    LastBullet[index].rotation = LastBarrel[k].rotation;
-                    LastBullets[index].MoveBullet(Dir, bulletSpeed, 0);
+                    LastBullet1[index].gameObject.SetActive(true);
+                    LastBullet1[index].position = LastBarrel1[k].position;
+                    LastBullet1[index].rotation = LastBarrel1[k].rotation;
+                    LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
                 }
-                yield return new WaitForSecondsRealtime(0.3f);
+                yield return new WaitForSecondsRealtime(0.25f);
+                if (count % 4 == 0 || count % 4 == 3)
+                    LastBarrelCenter.Rotate(new Vector3(0, 0, 3f));
+                else
+                    LastBarrelCenter.Rotate(new Vector3(0, 0, -3f));
                 // 4방향으로 말탄환을 날린다. (1, 3, 5, 7)
                 for (int k = 1; k < 9; k += 2)
                 {
-                    index = k + (count%3 )* 9;
-                    targetDir = LastBarrel[k].position;
+                    index = k + (count%3)* 9;
+                    targetDir = LastBarrel1[k].position;
                     Dir = targetDir - (Vector2)ThisTransform.position;
-                    LastBullet[index].gameObject.SetActive(true);
-                    LastBullet[index].position = LastBarrel[k].position;
-                    LastBullet[index].rotation = LastBarrel[k].rotation;
-                    LastBullets[index].MoveBullet(Dir, bulletSpeed, 0);
+                    LastBullet1[index].gameObject.SetActive(true);
+                    LastBullet1[index].position = LastBarrel1[k].position;
+                    LastBullet1[index].rotation = LastBarrel1[k].rotation;
+                    LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
                 }
-                yield return new WaitForSecondsRealtime(0.3f);
+                yield return new WaitForSecondsRealtime(0.25f);
                 // 공격 범위 조정을 위해 LastBarrel 좌우로 회전
                 if (count % 4 == 0 || count % 4 == 3)
-                    LastBarrelCenter.Rotate(new Vector3(0, 0, 9f));
+                    LastBarrelCenter.Rotate(new Vector3(0, 0, 3f));
                 else
-                    LastBarrelCenter.Rotate(new Vector3(0, 0, -9f));
+                    LastBarrelCenter.Rotate(new Vector3(0, 0, -3f));
             }
             // 공격 딜레이
             yield return new WaitForSecondsRealtime(2f);
+
+            /* 패턴 2 => LeftFloor[5] 중 한 곳 + RightFloor[5] 중 한 곳, 총 두 곳을 향해 말탄환을 동시에 3개씩 발사하고 플레이어를 향해 한 발 발사한다 */
+            FloorShuffle();
+            for (int i = 0; i < 5; i++)
+            {
+                // 타겟 Floor 표시
+                markX_L.gameObject.SetActive(true);
+                markX_R.gameObject.SetActive(true);
+                markX_L.position = LeftFloor[i].position;
+                markX_R.position = RightFloor[i].position;
+                // 말탄환 애니메이션
+                for(int k = 0; k < 7; k++)
+                {
+                    bulletObject[k].SetActive(true);
+                    bulletAnimator[k].SetTrigger("Ready");
+                    yield return new WaitForSecondsRealtime(0.1f);
+                }
+                yield return new WaitForSecondsRealtime(0.3f);
+                markX_L.gameObject.SetActive(false);
+                markX_R.gameObject.SetActive(false);
+                // 애니메이션 끝나면 말탄환 생성 및 발사 (오른쪽+왼쪽)
+                for (int barrel_index = 1; barrel_index <= 3; barrel_index++)
+                {
+                    // 왼쪽
+                    index = LastBullets2_index[barrel_index];
+                    targetDir = LeftFloor[i].position;
+                    Dir = targetDir - (Vector2) LastBarrel2[barrel_index].position;
+                    digree = Mathf.Atan2(LastBarrel2[barrel_index].position.y - targetDir.y, LastBarrel2[barrel_index].position.x - targetDir.x) * 180f / Mathf.PI;
+                    LastBarrel2[barrel_index].Rotate(0, 0, digree);
+                    bulletObject[barrel_index].SetActive(false);
+                    LastBullet1[index].gameObject.SetActive(true);
+                    LastBullet1[index].position = LastBarrel2[barrel_index].position;
+                    LastBullet1[index].rotation = LastBarrel2[barrel_index].rotation;
+                    LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
+                    LastBarrel2[barrel_index].Rotate(0, 0, -digree);
+                    // 오른쪽
+                    index = LastBullets2_index[barrel_index+3];
+                    targetDir = RightFloor[i].position;
+                    Dir = targetDir - (Vector2)LastBarrel2[barrel_index+3].position;
+                    digree = Mathf.Atan2(LastBarrel2[barrel_index+3].position.y - targetDir.y, LastBarrel2[barrel_index+3].position.x - targetDir.x) * 180f / Mathf.PI;
+                    LastBarrel2[barrel_index+3].Rotate(0, 0, digree);
+                    bulletObject[barrel_index+3].SetActive(false);
+                    LastBullet1[index].gameObject.SetActive(true);
+                    LastBullet1[index].position = LastBarrel2[barrel_index+3].position;
+                    LastBullet1[index].rotation = LastBarrel2[barrel_index+3].rotation;
+                    LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
+                    LastBarrel2[barrel_index+3].Rotate(0, 0, -digree);
+                    yield return new WaitForSecondsRealtime(0.1f);
+                }
+                // 플레이어를 향해 말탄환 생성 및 발사
+                index = LastBullets2_index[0];
+                targetDir = targetTransform.position;
+                Dir = targetDir - (Vector2)LastBarrel2[0].position;
+                digree = Mathf.Atan2(LastBarrel2[0].position.y - targetDir.y, LastBarrel2[0].position.x - targetDir.x) * 180f / Mathf.PI;
+                LastBarrel2[0].Rotate(0, 0, digree);
+                bulletObject[0].SetActive(false);
+                LastBullet1[index].gameObject.SetActive(true);
+                LastBullet1[index].position = LastBarrel2[0].position;
+                LastBullet1[index].rotation = LastBarrel2[0].rotation;
+                LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
+                LastBarrel2[0].Rotate(0, 0, -digree);
+                // 공격 딜레이
+                yield return new WaitForSecondsRealtime(2f);
+            }
+            // 공격 딜레이
+            yield return new WaitForSecondsRealtime(3f);
+        }
+    }
+
+    // LeftFloor[5]와 RightFloor[5]를 랜덤 정렬한다.
+    public void FloorShuffle()
+    {
+        for(int i = 0; i < LeftFloor.Length; i++)
+        {
+            int random = Random.Range(0, LeftFloor.Length);
+            tempFloor = LeftFloor[random];
+            LeftFloor[random] = LeftFloor[i];
+            LeftFloor[i] = tempFloor;
+        }
+        for (int i = 0; i < RightFloor.Length; i++)
+        {
+            int random = Random.Range(0, RightFloor.Length);
+            tempFloor = RightFloor[random];
+            RightFloor[random] = RightFloor[i];
+            RightFloor[i] = tempFloor;
         }
     }
 
@@ -343,7 +487,7 @@ public class B_EnemyMovement : MonoBehaviour {
         int index = 0;
         Quaternion[] R = {barrel[2].rotation, barrel[3].rotation, barrel[4].rotation, barrel[5].rotation, barrel[6].rotation};
         // 좌우하+대각선2방향으로 말탄환을 날린다.
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             headAnimator.SetTrigger("attack");
             wingsAnimator.SetTrigger("attack");
             for (int k = 2; k <= 6; k++)
@@ -357,17 +501,17 @@ public class B_EnemyMovement : MonoBehaviour {
                 Bullets[index].MoveBullet(Dir, bulletSpeed, 0);
                 yield return new WaitForSecondsRealtime(0.2f);
                 index += 1;
-                index %= 16;
+                index %= 15;
             }
             yield return new WaitForSecondsRealtime(1f);
+            if (i % 2 == 0)
+                BarrelCenter.Rotate(new Vector3(0, 0, 22.5f));
+            else
+                BarrelCenter.Rotate(new Vector3(0, 0, -22.5f));
             headAnimator.SetTrigger("attack");
             wingsAnimator.SetTrigger("attack");
             for (int k = 6; k >= 2; k--)
             {
-                if (i % 2 == 0)
-                    barrel[k].Rotate(new Vector3(0, 0, 22.5f));
-                else
-                    barrel[k].Rotate(new Vector3(0, 0, -22.5f));
                 targetDir = barrel[k].position;
                 Dir = targetDir - (Vector2) ThisTransform.position;
                 bullet[index].gameObject.SetActive(true);
@@ -376,9 +520,13 @@ public class B_EnemyMovement : MonoBehaviour {
                 Bullets[index].MoveBullet(Dir, bulletSpeed, 0);
                 yield return new WaitForSecondsRealtime(0.2f);
                 index += 1;
-                index %= 16;
+                index %= 15;
             }
             yield return new WaitForSecondsRealtime(1f);
+            if (i % 2 == 1)
+                BarrelCenter.Rotate(new Vector3(0, 0, 22.5f));
+            else
+                BarrelCenter.Rotate(new Vector3(0, 0, -22.5f));
         }
         yield return new WaitForSecondsRealtime(1f);
         Invoke("ActivateBullets", 0.5f);
