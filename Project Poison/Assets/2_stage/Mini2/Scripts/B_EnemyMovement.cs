@@ -537,7 +537,7 @@ public class B_EnemyMovement : MonoBehaviour {
                 index += 1;
                 index %= 15;
             }
-            yield return new WaitForSecondsRealtime(1f);
+            yield return new WaitForSecondsRealtime(2f);
             if (i % 2 == 0)
                 BarrelCenter.Rotate(new Vector3(0, 0, 22.5f));
             else
@@ -562,13 +562,13 @@ public class B_EnemyMovement : MonoBehaviour {
                 index += 1;
                 index %= 15;
             }
-            yield return new WaitForSecondsRealtime(1f);
+            yield return new WaitForSecondsRealtime(2f);
             if (i % 2 == 1)
                 BarrelCenter.Rotate(new Vector3(0, 0, 22.5f));
             else
                 BarrelCenter.Rotate(new Vector3(0, 0, -22.5f));
         }
-        yield return new WaitForSecondsRealtime(1f);
+        yield return new WaitForSecondsRealtime(2f);
         Invoke("ActivateBullets", 0.5f);
         count = 0;
     }
@@ -629,7 +629,7 @@ public class B_EnemyMovement : MonoBehaviour {
         else if (mode == B_UIManager.enemyMode.UpTogether)
         {
             Bullets[k].Invoke("Delete", 1.5f);
-            Invoke("ActivateBullet", 3f);
+            Invoke("ActivateBullet", 5f);
         }
     }
 

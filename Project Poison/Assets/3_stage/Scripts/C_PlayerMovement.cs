@@ -2,15 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class C_PlayerMovement : MonoBehaviour {
 
+    public C_ScoreUpdate UIM;
+
+    // 플레이어가 바라보는 방향
+    public enum FaceDirection { FaceRight = -1, FaceLeft = 1 };
+    public FaceDirection Facing = FaceDirection.FaceRight;
+
     //이동
-    public float movePower = 6f;
-    public bool inputLeft = false;
-    public bool inputRight = false;
-    public bool inputUp = false;
-    public bool inputDown = false;
+    float dirX, dirY;
+
+    //속도
+    public float MaxSpeed = 10f, Speed = 5f;
+
+    bool isWalk = false;
 
     //체력
     public int maxHealth = 600;
@@ -24,6 +32,7 @@ public class C_PlayerMovement : MonoBehaviour {
     public GameObject item;
     public Transform[] itemarr;
 
+    private Transform ThisTransform = null;
     int i = 1;
     public float PathCenterposX = 5f;
     public GameObject[] Enemy;
@@ -36,14 +45,13 @@ public class C_PlayerMovement : MonoBehaviour {
 
     //애니메이터
     Animator animator;
+
     // 애니메이션을 위한
     public Animator faceAnimator;
     public Animator handsAnimator;
     public Animator bodyAnimator;
 
-    //bool isWalk = false;
-
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer[] spriteRenderer;
 
     //충돌시 깜빡거림
     bool isUnBeatTime = false;
@@ -55,9 +63,9 @@ public class C_PlayerMovement : MonoBehaviour {
 
     // Use this for initialization
     void Awake() {
-        rigid = gameObject.GetComponent<Rigidbody2D>();
-        animator = gameObject.GetComponentInChildren<Animator>();
-        spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
+        rigid = GetComponent<Rigidbody2D>();
+        animator = GetComponentInChildren<Animator>();
+        ThisTransform = GetComponent<Transform>();
 
         health = maxHealth;
         EnemyScript = new C_EnemyMove[Enemy.Length];
@@ -109,11 +117,41 @@ public class C_PlayerMovement : MonoBehaviour {
 
     void FixedUpdate()
     {
-        //Check Health
-        if (health == 0)
-            return;
-        Move();
-       
+        dirX = CrossPlatformInputManager.GetAxis("Horizontal");
+        dirY = CrossPlatformInputManager.GetAxis("Vertical");
+
+        rigid.velocity = new Vector2(dirX * speed, dirY * speed);
+
+        // 필요한 경우 방향을 바꾼다.
+        if (((dirX < 0f && Facing == FaceDirection.FaceRight) || (dirX > 0f && Facing == FaceDirection.FaceLeft)))
+            FlipDirection();
+        // 속도를 제한한다.
+        rigid.velocity = new Vector2(Mathf.Clamp(rigid.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(rigid.velocity.y, -MaxSpeed, MaxSpeed));
+
+        // 이동 여부 확인
+        isWalk = handsAnimator.GetBool("walk");
+
+        // 걷는 모션
+        if (isWalk && rigid.velocity.x == 0 && rigid.velocity.y ==0)
+        {
+            handsAnimator.SetBool("walk", false);
+            bodyAnimator.SetBool("walk", false);
+        }
+        if (!isWalk && (rigid.velocity.x != 0 || rigid.velocity.y !=0))
+        {
+            handsAnimator.SetBool("walk", true);
+            bodyAnimator.SetBool("walk", true);
+        }
+
+    }
+
+    // 캐릭터 방향을 바꾼다.
+    public void FlipDirection()
+    {
+        Facing = (FaceDirection)((int)Facing * -1f);
+        Vector3 LocalScale = ThisTransform.localScale;
+        LocalScale.x *= -1f;
+        ThisTransform.localScale = LocalScale;
     }
 
     void Die()
@@ -134,60 +172,7 @@ public class C_PlayerMovement : MonoBehaviour {
 
     // Update is called once per frame
     //moving
-    void Move()
-    {
-        Vector3 moveVelocity = Vector3.zero;
-        Vector3 ThisScale = transform.localScale;
-        if ((!inputRight && !inputLeft && !inputUp && !inputDown))
-        {
-            animator.SetBool("isMoving", false);
-        }
-        else if (inputLeft)
-        {
-            animator.SetBool("isMoving", true);
-            moveVelocity = Vector3.left;
-            if(ThisScale.x < 0)
-                ThisScale.x *= -1;
-            transform.localScale = ThisScale;
-        }
-        else if (inputRight)
-        {
-            animator.SetBool("isMoving", true);
-            moveVelocity = Vector3.right;
-            if (ThisScale.x > 0)
-                ThisScale.x *= -1;
-            transform.localScale = ThisScale;
-        }
-        else if (inputUp)
-        {
-            animator.SetBool("isMoving", true);
-            moveVelocity = Vector3.up;
-        }
-        else if (inputDown)
-        {
-            animator.SetBool("isMoving", true);
-            moveVelocity = Vector3.down;
-        }
-
-        Vector3 pos = transform.position;
-        if(pos.x > 9.6) //오른쪽으로 나감
-        {
-            inputRight = false;
-        }
-        else if(pos.x< -7.9)
-        {
-            inputLeft = false;
-        }
-        if (pos.y > 5.5)
-        {
-            inputUp = false;
-        }
-        else if (pos.y < -0.01)
-        {
-            inputDown = false;
-        }
-        transform.position += moveVelocity * movePower * Time.deltaTime * 10;
-    }
+   
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -217,6 +202,7 @@ public class C_PlayerMovement : MonoBehaviour {
             else if (!isUnBeatTime)
             {
                 health -= 25;
+                UIM.HitPlayer(25);
                 if (health > 0)
                 {
                     isUnBeatTime = true;
@@ -324,50 +310,22 @@ public class C_PlayerMovement : MonoBehaviour {
             int countTime = 0;
             while (countTime < 10)
             {
-                if (countTime % 2 == 0)
-                    spriteRenderer.color = new Color32(255, 255, 255, 90);
-                else
-                    spriteRenderer.color = new Color32(255, 255, 255, 180);
+                for (int i = 0; i < spriteRenderer.Length; i++)
+                {
+                    if (countTime % 2 == 0)
+                        spriteRenderer[i].color = new Color32(255, 255, 255, 90);
+                    else
+                        spriteRenderer[i].color = new Color32(255, 255, 255, 180);
+                }
                 yield return new WaitForSeconds(0.2f);
-                countTime++;
+                    countTime++;
             }
-            spriteRenderer.color = new Color32(255, 255, 255, 255);
-
-            isUnBeatTime = false;
+        for (int i = 0; i < spriteRenderer.Length; i++)
+            spriteRenderer[i].color = new Color32(255, 255, 255, 255);
+    
+        isUnBeatTime = false;
     }
 
-    public void LeftDown()
-    {
-        inputLeft = true;
-    }
-    public void LeftUp()
-    {
-        inputLeft = false;
-    }
-    public void RightDown()
-    {
-        inputRight = true;
-    }
-    public void RightUp()
-    {
-        inputRight = false;
-    }
-    public void DownDown()
-    {
-        inputDown = true;
-    }
-    public void DownUp()
-    {
-        inputDown = false;
-    }
-    public void UpDown()
-    {
-        inputUp = true;
-    }
-    public void UpUp()
-    {
-        inputUp = false;
-    }
 }
 
 

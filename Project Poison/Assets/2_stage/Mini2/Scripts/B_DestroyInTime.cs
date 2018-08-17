@@ -20,8 +20,6 @@ public class B_DestroyInTime : MonoBehaviour {
     {
         if (collision.CompareTag("wall"))
             Delete();
-        else if (collision.CompareTag("floor") && ThisName.Equals("waterbullet"))
-            Delete();
         else if (collision.CompareTag("waterbullet") && ThisName.Equals("letterbullet"))
             Delete();
         else if ((collision.CompareTag("Player")) && ThisName.Equals("item"))

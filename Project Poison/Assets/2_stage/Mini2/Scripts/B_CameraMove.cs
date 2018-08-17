@@ -61,22 +61,7 @@ private void CheckMode()
             }
             else
             {
-                if (y <= 0)
-                {
-                    y = 0;
-                }
-                else if (y >= 13.58f)
-                {
-                    y = 13.58f;
-                }
-                if (x <= -1)
-                {
-                    x = -1;
-                }
-                else if (x >= 1)
-                {
-                    x = 1;
-                }
+                SetXY();
                 Vector3 targetXY = new Vector3(x, y, -25);
                 if (ThisTransform.position == targetXY)
                 {
@@ -115,22 +100,7 @@ private void CheckMode()
         {
             if (!switchE || !switchF)
             {
-                if (y <= 0)
-                {
-                    y = 0;
-                }
-                else if (y >= 13.58f)
-                {
-                    y = 13.58f;
-                }
-                if (x <= -1)
-                {
-                    x = -1;
-                }
-                else if (x >= 1)
-                {
-                    x = 1;
-                }
+                SetXY();
                 targetPosition = new Vector3(x, y, -25);
                 // 카메라 위치 이동
                 if (ThisTransform.position == targetPosition)
@@ -153,46 +123,36 @@ private void CheckMode()
             }
             else if(switchE && switchF)
             {
-                if (y <= 0)
-                {
-                    y = 0;
-                }
-                else if (y >= 13.58f)
-                {
-                    y = 13.58f;
-                }
-                if (x <= -1)
-                {
-                    x = -1;
-                }
-                else if (x >= 1)
-                {
-                    x = 1;
-                }
+                SetXY();
                 ThisTransform.position = new Vector3(x, y, -25);
             }
         }
         // normal모드 시 작동
         else
         {
-            if (y <= 0)
-            {
-                y = 0;
-            }
-            else if (y >= 13.58f)
-            {
-                y = 13.58f;
-            }
-            if (x <= -1)
-            {
-                x = -1;
-            }
-            else if (x >= 1)
-            {
-                x = 1;
-            }
+            SetXY();
             ThisTransform.position = new Vector3(x, y, -25);
             ThisCamera.orthographicSize = 5.733f;
+        }
+    }
+
+    private void SetXY()
+    {
+        if (y <= 0)
+        {
+            y = 0;
+        }
+        else if (y >= 19.55f)
+        {
+            y = 19.55f;
+        }
+        if (x <= -3.33f)
+        {
+            x = -3.33f;
+        }
+        else if (x >= 3.33f)
+        {
+            x = 3.33f;
         }
     }
 
@@ -206,9 +166,6 @@ private void CheckMode()
         blackout.SetActive(true);
         yield return new WaitForSecondsRealtime(0.25f);
         blackout.SetActive(false);
-        /*whiteout.SetActive(true);
-        yield return new WaitForSecondsRealtime(0.1f);
-        whiteout.SetActive(false);*/
     }
 
 }

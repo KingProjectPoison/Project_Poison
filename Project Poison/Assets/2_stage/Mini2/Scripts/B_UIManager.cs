@@ -6,10 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class B_UIManager : MonoBehaviour {
 
-    /* 테스트용 변수*/
-    public B_PlayerControl player;
-    public B_EnemyMovement enemy1, enemy2;
-
     private Transform ThisTransform;
     public Camera mainCame;
     public Transform playerTarget, enemy1Target, enemy2Target, clear1Target, clear2Target;
@@ -21,7 +17,7 @@ public class B_UIManager : MonoBehaviour {
     public Slider hourglassA, hourglassB, hourglassC;
     private Transform transformC;
     public Animator BreakHourglass;
-    public int attackLimit = 15, shieldLimit = 5;
+    public int shieldLimit = 5;
     public int playerMaxHP = 600;
     int playerHP;
     public bool moveSand = false, enemy2_page2 = false;
@@ -50,16 +46,11 @@ public class B_UIManager : MonoBehaviour {
     public GameObject[] RemoveItem;
     public GameObject RemoveCanvas;
     // UIScreen
-    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad, GameStart_Screen;
+    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
     // static
     public static B_UIManager instance = null;
 
     private void Awake()
-    {
-        GameStart();
-    }
-
-    private void Start()
     {
         if (instance == null)
             instance = this;
@@ -79,12 +70,11 @@ public class B_UIManager : MonoBehaviour {
         hourglassA.value = playerHP;
         hourglassB.value = playerMaxHP - playerHP;
         hourglassC.value = 0;
+        PositionZ = ThisTransform.position.z;
     }
 
     // Update is called once per frame
     void Update () {
-        PositionZ = ThisTransform.position.z;
-        attackImage.position = mainCame.WorldToScreenPoint(new Vector3(playerTarget.position.x, playerTarget.position.y, PositionZ));
         if (flag1)
             enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy1Target.position.x, enemy1Target.position.y, PositionZ));
         else
@@ -296,15 +286,10 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
-    // 공격 개수 제한 + 공격 딜레이 애니메이션 관련
+    // 공격 딜레이 애니메이션 관련
     public void Attack()
     {
-        attackLimit--;
-        attackLimitText1.text = "" + attackLimit;
-        attackLimitText2.text = "" + attackLimit;
         StartCoroutine("AttackAnimation");
-        if(attackLimit == 0)
-            Invoke("AttackLimitOver", 5f);
     }
 
     IEnumerator AttackAnimation()
@@ -385,38 +370,7 @@ public class B_UIManager : MonoBehaviour {
             Bad.SetActive(true);
         }
     }
-
-    // 테스트 용 함수
-    // 게임 시작 창
-    public void GameStart()
-    {
-        RemoveCanvas.SetActive(false);
-        GameStart_Screen.SetActive(true);
-        Time.timeScale = 0;
-    }
-    // easyMode 선택 시
-    public void EasyMode()
-    {
-        enemy1.Health = enemy2.Health = enemyMaxHP = 6;
-        player.AttackLimit = attackLimit = 10;
-        enemy1HP = enemyMaxHP;
-        enemy2HP = enemyMaxHP;
-        attackLimitText1.text = "" + attackLimit;
-        attackLimitText2.text = "" + attackLimit;
-        TimeGo();
-    }
-    // normalMode 선택 시
-    public void NormalMode()
-    {
-        enemy1.Health = enemy2.Health = enemyMaxHP = 10;
-        player.AttackLimit = attackLimit = 15;
-        enemy1HP = enemyMaxHP;
-        enemy2HP = enemyMaxHP;
-        attackLimitText1.text = "" + attackLimit;
-        attackLimitText2.text = "" + attackLimit;
-        TimeGo();
-    }
-
+    
     // 게임 일시 정지
     public void TimeStop()
     {
@@ -441,7 +395,6 @@ public class B_UIManager : MonoBehaviour {
     {
         ThisAudio.clip = buttonClick;
         ThisAudio.Play();
-        GameStart_Screen.SetActive(false);
         TimeStop_Screen.SetActive(false);
         Result_Screen.SetActive(false);
         GameOver_Screen.SetActive(false);

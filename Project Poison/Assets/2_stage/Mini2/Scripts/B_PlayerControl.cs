@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
-// using UnityEngine.UI;
 
 public class B_PlayerControl : MonoBehaviour {
 
@@ -36,7 +35,6 @@ public class B_PlayerControl : MonoBehaviour {
     // 공격/방어를 위한
     public Transform barrel;
     public Transform bullet;
-    public int AttackLimit;
     public Collider2D shield;
     int ShieldLimit;
     public GameObject playerShield;
@@ -73,7 +71,6 @@ public class B_PlayerControl : MonoBehaviour {
         bullet.gameObject.SetActive(false);
         FlipDirection();
         Health = UIM.playerMaxHP;
-        AttackLimit = UIM.attackLimit;
         ShieldLimit = UIM.shieldLimit;
     }
 
@@ -180,24 +177,19 @@ public class B_PlayerControl : MonoBehaviour {
     // 공격
     public void Attack()
     {
-        if (AttackLimit <= 0 || !CanAttack)
+        if (!CanAttack)
             return;
 
-        if (AttackLimit > 0 && CanAttack)
-        {
-            print("플레이어 공격 limit : " + AttackLimit);
-            ThisAudio.clip = playerAttack;
-            ThisAudio.Play();
-            CanAttack = false;
-            faceAnimator.SetTrigger("attack");
-            handsAnimator.SetTrigger("attack");
-            bullet.gameObject.SetActive(true);
-            bullet.position = barrel.position;
-            bullet.rotation = barrel.rotation;
-            bulletBody.AddForce(barrel.up * bulletSpeed);
-            AttackLimit--;
-            UIM.Attack();
-        }
+        ThisAudio.clip = playerAttack;
+        ThisAudio.Play();
+        CanAttack = false;
+        faceAnimator.SetTrigger("attack");
+        handsAnimator.SetTrigger("attack");
+        bullet.gameObject.SetActive(true);
+        bullet.position = barrel.position;
+        bullet.rotation = barrel.rotation;
+        bulletBody.AddForce(barrel.up * bulletSpeed);
+        UIM.Attack();
         Invoke("ActivateBullet", AttackTimeOut);
     }
 
