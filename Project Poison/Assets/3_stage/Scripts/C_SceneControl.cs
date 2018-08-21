@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class C_SceneControl : MonoBehaviour {
+public class SceneControl : MonoBehaviour {
     Image TimeBar;
     public float maxTime = 2.4f;
     float timeLeft;

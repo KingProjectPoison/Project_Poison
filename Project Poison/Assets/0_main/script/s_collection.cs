@@ -37,6 +37,10 @@ public class s_collection : MonoBehaviour {
     {
         //Stage 결과 score에 저장하기
 
+        score[0] = s_variable.score[0];
+        score[1] = s_variable.score[1];
+        score[2] = s_variable.score[2];
+
         if (score[0] > 420) grade[0] = true;
         if (score[0] <= 420) grade[0] = false;
         if (score[1] > 250) grade[1] = true;
