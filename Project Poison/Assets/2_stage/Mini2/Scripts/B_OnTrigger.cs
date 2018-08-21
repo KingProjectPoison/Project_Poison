@@ -47,7 +47,7 @@ public class B_OnTrigger : MonoBehaviour {
             B_SoundManager.instance.PlaySingle(soundEffect);
             B_UIManager.instance.Result();
         }
-        else if(collision.CompareTag("floor_middle"))
+        else if(collision.CompareTag("floor_middle") &&ThisTag.Equals("E1_center"))
         {
             if (target != null && target.mode == B_UIManager.enemyMode.normal)
                 target.Change_i();

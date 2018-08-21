@@ -10,21 +10,20 @@ public class B_CameraMove : MonoBehaviour {
     private Transform ThisTransform;
     private Rigidbody2D ThisBody;
     private Camera ThisCamera;
-    public GameObject blackout, whiteout;
     float x, y;
     bool switchA = false, switchB = false, switchC = false, switchD = false, switchE = false, switchF = false;
-    Vector3 UP1 = new Vector3(0, 12.5f, -25), UP2 = new Vector3(0, 12, -25), targetPosition;
+    Vector3 UP1 = new Vector3(0, 17.5f, -25), UP2 = new Vector3(0, 16.17f, -25), targetPosition;
 
     private void Awake()
     {
         ThisTransform = GetComponent<Transform>();
         ThisBody = GetComponent<Rigidbody2D>();
         ThisCamera = GetComponent<Camera>();
-        setupCamera();
+        SetupCamera();
     }
 
     // 화면 해상도
-    private void setupCamera()
+    private void SetupCamera()
     {
         Screen.SetResolution(1280, 800, false);
     }
@@ -51,10 +50,10 @@ private void CheckMode()
         {
             if (!switchA)
             {
-                if (ThisTransform.position == UP1)
+                if (ThisTransform.position.y > UP1.y - 0.01f)
                 {
                     ThisBody.velocity = Vector2.zero;
-                    Invoke("SetSwitchA", 0.5f);
+                    Invoke("SetSwitchA", 1f);
                 }
                 else
                     ThisBody.velocity = (UP1 - ThisTransform.position) * 3f;
@@ -78,7 +77,7 @@ private void CheckMode()
             if (!switchC || !switchD)
             {
                 // 카메라 위치 이동
-                if (ThisTransform.position == UP2)
+                if (ThisTransform.position.y > UP2.y - 0.01f)
                 {
                     ThisBody.velocity = Vector2.zero;
                     switchC = true;
@@ -86,10 +85,10 @@ private void CheckMode()
                 else
                     ThisBody.velocity = (UP2 - ThisTransform.position) * 3f;
                 // 카메라 크기 조정
-                if (ThisCamera.orthographicSize >= 6.33f)
+                if (ThisCamera.orthographicSize >= 7.8f)
                 {
                     switchD = true;
-                    ThisCamera.orthographicSize = 6.33f;
+                    ThisCamera.orthographicSize = 7.8f;
                 }
                 else
                     ThisCamera.orthographicSize += 0.01f;
@@ -159,13 +158,6 @@ private void CheckMode()
     private void SetSwitchA()
     {
         switchA = true;
-    }
-
-    IEnumerator ScreenOnOff()
-    {
-        blackout.SetActive(true);
-        yield return new WaitForSecondsRealtime(0.25f);
-        blackout.SetActive(false);
     }
 
 }

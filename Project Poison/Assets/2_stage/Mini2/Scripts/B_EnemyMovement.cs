@@ -45,10 +45,11 @@ public class B_EnemyMovement : MonoBehaviour {
     public Transform[] Path_UpTogether;
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
-    int i = 0, page = 1, count = 0;
+    public int i = 0;
+    int page = 1, count = 0;
     bool flag = true, flip = true, clear = false, switchA = false, switchB = false, switchC = false, testFlag = true;
     Vector2 targetDir, Dir;
-    Vector3 UpMiddle = new Vector3(0, 16.7f, 0);
+    Vector3 UpMiddle = new Vector3(0, 22f, 0);
     //  체력 5칸
     public int Health;
     public B_UIManager UIM;
@@ -628,7 +629,7 @@ public class B_EnemyMovement : MonoBehaviour {
         }
         else if (mode == B_UIManager.enemyMode.UpTogether)
         {
-            Bullets[k].Invoke("Delete", 1.5f);
+            Bullets[k].Invoke("Delete", 3f);
             Invoke("ActivateBullet", 5f);
         }
     }
@@ -645,7 +646,6 @@ public class B_EnemyMovement : MonoBehaviour {
     {
         if (collision.tag.Equals("waterbullet") && Health > 0)
         {
-            print(Health);
             Health--;
             headAnimator.SetTrigger("hit");
             wingsAnimator.SetTrigger("hit");

@@ -3,7 +3,26 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerCenter
+  - Item
+  - Floor
+  - hourGlass
+  - enemy
+  - Shield
+  - wall
+  - item
+  - floor
+  - door0
+  - waterbullet
+  - side
+  - door1
+  - UI
+  - enemy1
+  - enemy2
+  - floor_middle
+  - letterbullet
+  - E1_center
   layers:
   - Default
   - TransparentFX

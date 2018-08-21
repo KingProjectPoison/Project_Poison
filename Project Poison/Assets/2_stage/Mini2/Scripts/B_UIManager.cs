@@ -10,8 +10,7 @@ public class B_UIManager : MonoBehaviour {
     public Camera mainCame;
     public Transform playerTarget, enemy1Target, enemy2Target, clear1Target, clear2Target;
     public GameObject door1, door2;
-    public RectTransform attackImage, enemy1_bar, enemy2_bar;
-    public Text attackLimitText1, attackLimitText2;
+    public RectTransform enemy1_bar, enemy2_bar;
     public Text shieldLimitText1, shieldLimitText2;
     private Scrollbar enemy1_scroll, enemy2_scroll;
     public Slider hourglassA, hourglassB, hourglassC;
@@ -177,7 +176,7 @@ public class B_UIManager : MonoBehaviour {
         groundScript.activeScript = false;
         groundScript.CreateFloors();
         Vector3 pos = ground.position;
-        pos.y += 11f;
+        pos.y += 13.45f;
         ground.position = pos;
     }
 

@@ -408,6 +408,10 @@ public class B_PlayerControl : MonoBehaviour {
     // 아이템 관련
     public void ItemOn()
     {
+        UIM.HealPlayer(100);
+        Health += 100;
+        if (Health > 600)
+            Health = 600;
         ThisAudio.clip = itemSound;
         ThisAudio.Play();
         UIM.isItem = true;
@@ -423,30 +427,6 @@ public class B_PlayerControl : MonoBehaviour {
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;
-    }
-
-    // 설정 창에 있는 playerHeal 버튼 기능 (15초에 한번 가능)
-    public void HealPlayer(int power)
-    {
-        if (Health <= 600 && healFlag)
-        {
-            healFlag = false;
-            OK.SetActive(true);
-            Health += power;
-            UIM.HealPlayer(power);
-            UIM.hourglassA.value = Health;
-            UIM.hourglassB.value = 600 - Health;
-            Invoke("SetHealFlag", 15f);
-        }
-
-        if (Health > 600)
-            Health = 600;
-    }
-
-    private void SetHealFlag()
-    {
-        OK.SetActive(false);
-        healFlag = true;
     }
 
     // 플레이어를 죽이는 함수
